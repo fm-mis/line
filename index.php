@@ -1,49 +1,35 @@
 <?php
- $token = "XDh657bnZH48lPqyaeJdc5vsmUY9HCF3tdzkLVx7AxR";
 
- $mes = $_GET['mes'];
- $stickerPkg = 3; //stickerPackageId
-$stickerId = 240; //stickerId
+define('ACCESS_TOKEN', 'kjEv3TVS76bQUNkI2Xhse5L9O8hNHY1hQM9nkmn5l3N');
+define('LINE_API_URI', 'https://notify-api.line.me/api/notify');
 
- define('LINE_API',"https://notify-api.line.me/api/notify");  
+$headers = [
+    'Authorization: Bearer ' . ACCESS_TOKEN
+];
+$fields = [
+    'message' => 'Your order #12345 has been delivered'
+];
 
- $res = notify_message($mes,$stickerPkg,$stickerId,$token);
+try {
+    $ch = curl_init();
 
- print_r($res);
+    curl_setopt($ch, CURLOPT_URL, LINE_API_URI);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POST, count($fields));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
- function notify_message($message,$stickerPkg,$stickerId,$token){
+    $res = curl_exec($ch);
+    curl_close($ch);
 
-  $data = array('message' => $message,
-  'stickerPackageId'=>$stickerPkg,
-      'stickerId'=>$stickerId);
+    if ($res == false)
+        throw new Exception(curl_error($ch), curl_errno($ch));
 
-  $data = http_build_query($data,'','&');
+    $json = json_decode($res);
+    $status = $json->status;
 
-  $header = array( 
-
-          'http'=>array(
-
-             'method'=>'POST',
-
-             'header'=> "Content-Type: application/x-www-form-urlencoded\r\n"
-
-                       ."Authorization: Bearer ".$token."\r\n"
-
-                       ."Content-Length: ".strlen($data)."\r\n",
-
-             'content' => $data
-
-          ),
-
-  );
-
-  $context = stream_context_create($header);
-
-  $result = file_get_contents(LINE_API,FALSE,$context);
-
-  $res = json_decode($result);
-
-  return $res;
-
- }
- ?>
+    var_dump($status);
+} catch (Exception $e) {
+    var_dump($e);
+}
