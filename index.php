@@ -1,6 +1,6 @@
 <?php
 
-define('ACCESS_TOKEN', 'kjEv3TVS76bQUNkI2Xhse5L9O8hNHY1hQM9nkmn5l3N');
+define('ACCESS_TOKEN', 'O7OAUYg8Oo0hYZnGhzscN61SM2YWb1eLNMuCPpmzi5Q');
 define('LINE_API_URI', 'https://notify-api.line.me/api/notify');
 
 $headers = [
